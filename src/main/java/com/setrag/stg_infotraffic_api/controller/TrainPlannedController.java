@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.setrag.stg_infotraffic_api.model.TrainPlanned;
+import com.setrag.stg_infotraffic_api.dto.TrainPlannedDTO;
 import com.setrag.stg_infotraffic_api.service.TrainPlannedService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/trains-planned")
@@ -28,26 +30,26 @@ public class TrainPlannedController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TrainPlanned>> getAllTrainsPlanned() {
-        List<TrainPlanned> trains = trainPlannedService.getAllTrainsPlanned();
+    public ResponseEntity<List<TrainPlannedDTO>> getAllTrainsPlanned() {
+        List<TrainPlannedDTO> trains = trainPlannedService.getAllTrainsPlanned();
         return ResponseEntity.ok(trains);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TrainPlanned> getTrainPlannedById(@PathVariable Long id) {
-        TrainPlanned train = trainPlannedService.getTrainPlannedById(id);
+    public ResponseEntity<TrainPlannedDTO> getTrainPlannedById(@PathVariable Long id) {
+        TrainPlannedDTO train = trainPlannedService.getTrainPlannedById(id);
         return ResponseEntity.ok(train);
     }
 
     @PostMapping
-    public ResponseEntity<TrainPlanned> createTrainPlanned(@RequestBody TrainPlanned train) {
-        TrainPlanned createdTrain = trainPlannedService.createTrainPlanned(train);
+    public ResponseEntity<TrainPlannedDTO> createTrainPlanned(@Valid @RequestBody TrainPlannedDTO trainDto) {
+        TrainPlannedDTO createdTrain = trainPlannedService.createTrainPlanned(trainDto);
         return new ResponseEntity<>(createdTrain, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TrainPlanned> updateTrainPlanned(@PathVariable Long id, @RequestBody TrainPlanned trainDetails) {
-        TrainPlanned updatedTrain = trainPlannedService.updateTrainPlanned(id, trainDetails);
+    public ResponseEntity<TrainPlannedDTO> updateTrainPlanned(@PathVariable Long id, @Valid @RequestBody TrainPlannedDTO trainDetailsDto) {
+        TrainPlannedDTO updatedTrain = trainPlannedService.updateTrainPlanned(id, trainDetailsDto);
         return ResponseEntity.ok(updatedTrain);
     }
 

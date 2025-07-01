@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.setrag.stg_infotraffic_api.model.TrainRoute;
+import com.setrag.stg_infotraffic_api.dto.TrainRouteDTO;
 import com.setrag.stg_infotraffic_api.service.TrainRouteService;
 
 @RestController
@@ -28,26 +28,26 @@ public class TrainRouteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TrainRoute>> getAllTrainRoutes() {
-        List<TrainRoute> routes = trainRouteService.getAllTrainRoutes();
+    public ResponseEntity<List<TrainRouteDTO>> getAllTrainRoutes() {
+        List<TrainRouteDTO> routes = trainRouteService.getAllTrainRoutes();
         return ResponseEntity.ok(routes);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TrainRoute> getTrainRouteById(@PathVariable Long id) {
-        TrainRoute route = trainRouteService.getTrainRouteById(id);
+    public ResponseEntity<TrainRouteDTO> getTrainRouteById(@PathVariable Long id) {
+        TrainRouteDTO route = trainRouteService.getTrainRouteById(id);
         return ResponseEntity.ok(route);
     }
 
     @PostMapping
-    public ResponseEntity<TrainRoute> createTrainRoute(@RequestBody TrainRoute route) {
-        TrainRoute createdRoute = trainRouteService.createTrainRoute(route);
+    public ResponseEntity<TrainRouteDTO> createTrainRoute(@RequestBody TrainRouteDTO routeDto) {
+        TrainRouteDTO createdRoute = trainRouteService.createTrainRoute(routeDto);
         return new ResponseEntity<>(createdRoute, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TrainRoute> updateTrainRoute(@PathVariable Long id, @RequestBody TrainRoute routeDetails) {
-        TrainRoute updatedRoute = trainRouteService.updateTrainRoute(id, routeDetails);
+    public ResponseEntity<TrainRouteDTO> updateTrainRoute(@PathVariable Long id, @RequestBody TrainRouteDTO routeDetailsDto) {
+        TrainRouteDTO updatedRoute = trainRouteService.updateTrainRoute(id, routeDetailsDto);
         return ResponseEntity.ok(updatedRoute);
     }
 

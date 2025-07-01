@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.setrag.stg_infotraffic_api.model.TrainSeatsAvailable;
+import com.setrag.stg_infotraffic_api.dto.TrainSeatsAvailableDTO;
 import com.setrag.stg_infotraffic_api.service.TrainSeatsAvailableService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/trains-seats-available") // Endpoint pour cette ressource
@@ -30,29 +32,29 @@ public class TrainSeatsAvailableController {
 
     // GET /api/v1/trains-seats-avaible
     @GetMapping
-    public ResponseEntity<List<TrainSeatsAvailable>> getAllTrainSeatsAvailable() {
-        List<TrainSeatsAvailable> trains = trainSeatsAvailableService.getAllTrainSeatsAvailable();
+    public ResponseEntity<List<TrainSeatsAvailableDTO>> getAllTrainSeatsAvailable() {
+        List<TrainSeatsAvailableDTO> trains = trainSeatsAvailableService.getAllTrainSeatsAvailable();
         return ResponseEntity.ok(trains); // Renvoie un 200 OK avec la liste des trains 
     }
 
     // GET /api/v1/trains-seats-available/{id}
     @GetMapping("/{id}")
-    public ResponseEntity<TrainSeatsAvailable> getTrainSeatsAvailableById(@PathVariable Long id) {
-        TrainSeatsAvailable train = trainSeatsAvailableService.getTrainSeatsAvailableById(id);
+    public ResponseEntity<TrainSeatsAvailableDTO> getTrainSeatsAvailableById(@PathVariable Long id) {
+        TrainSeatsAvailableDTO train = trainSeatsAvailableService.getTrainSeatsAvailableById(id);
         return ResponseEntity.ok(train); // renvoie 200 OK avec le train trouvé
     }
 
     // POST /api/v1/trains-seats-available
     @PostMapping
-    public ResponseEntity<TrainSeatsAvailable> createTrainSeatsAvailable(@RequestBody TrainSeatsAvailable train) {
-        TrainSeatsAvailable createdTrain = trainSeatsAvailableService.createTrainSeatsAvailable(train);
+    public ResponseEntity<TrainSeatsAvailableDTO> createTrainSeatsAvailable(@Valid @RequestBody TrainSeatsAvailableDTO trainDto) {
+        TrainSeatsAvailableDTO createdTrain = trainSeatsAvailableService.createTrainSeatsAvailable(trainDto);
         return new ResponseEntity<>(createdTrain, HttpStatus.CREATED);
     }
 
     // PUT /api/v1/trains-seats-available/{id}
     @PutMapping("/{id}")
-    public ResponseEntity<TrainSeatsAvailable> updateTrainSeatsAvailable(@PathVariable Long id, @RequestBody TrainSeatsAvailable trainDetails) {
-        TrainSeatsAvailable updatedTrain = trainSeatsAvailableService.updateTrainSeatsAvailable(id, trainDetails);
+    public ResponseEntity<TrainSeatsAvailableDTO> updateTrainSeatsAvailable(@PathVariable Long id, @Valid @RequestBody TrainSeatsAvailableDTO trainDetailsDto) {
+        TrainSeatsAvailableDTO updatedTrain = trainSeatsAvailableService.updateTrainSeatsAvailable(id, trainDetailsDto);
         return ResponseEntity.ok(updatedTrain);
     }
 
