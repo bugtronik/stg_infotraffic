@@ -15,10 +15,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.setrag.stg_infotraffic_api.dto.TrainRouteDTO;
+import com.setrag.stg_infotraffic_api.dto.TrainSeatsAvailableDTO;
 import com.setrag.stg_infotraffic_api.service.TrainRouteService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/v1/trains-routes")
+@Tag(name = "Trains Route", description = "API pour la gestion des itinéraires des trains programmés")
 public class TrainRouteController {
     private final TrainRouteService trainRouteService;
 
@@ -27,30 +35,59 @@ public class TrainRouteController {
         this.trainRouteService = trainRouteService;
     }
 
+    @Operation(summary = "Récupérer tous les trains avec ses itinéraires",
+                description = "Permet de lister tous les trains avec l'ensemble des gares à parcourir.")
+    @ApiResponse(responseCode = "200", description = "Liste des trains et itinéraires récupérée avec succès",
+                content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = TrainSeatsAvailableDTO.class)))
     @GetMapping
     public ResponseEntity<List<TrainRouteDTO>> getAllTrainRoutes() {
         List<TrainRouteDTO> routes = trainRouteService.getAllTrainRoutes();
         return ResponseEntity.ok(routes);
     }
 
+    @Operation(summary = "Récupérer un train par ID",
+                description = "Permet de récupérer les détails d'un train spécifique par son identifiant unique.")
+    @ApiResponse(responseCode = "200", description = "Train récupéré avec succès")
+    @ApiResponse(responseCode = "404", description = "Train non trouvé",
+                content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = com.setrag.stg_infotraffic_api.exception.ErrorResponse.class)))
     @GetMapping("/{id}")
     public ResponseEntity<TrainRouteDTO> getTrainRouteById(@PathVariable Long id) {
         TrainRouteDTO route = trainRouteService.getTrainRouteById(id);
         return ResponseEntity.ok(route);
     }
 
+    @Operation(summary = "Créer un nouveau train avec ses itinéraires",
+                description = "Ajoute un nouveau train avec ses informations d'itinéraire à la base de données.")
+    @ApiResponse(responseCode = "201", description = "Train/itinéraires créé avec succès")
+    @ApiResponse(responseCode = "400", description = "Requête invalide (erreur de validation)",
+                content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = com.setrag.stg_infotraffic_api.exception.ErrorResponse.class)))
     @PostMapping
     public ResponseEntity<TrainRouteDTO> createTrainRoute(@RequestBody TrainRouteDTO routeDto) {
         TrainRouteDTO createdRoute = trainRouteService.createTrainRoute(routeDto);
         return new ResponseEntity<>(createdRoute, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Modifie un train avec ses itinéraires",
+                description = "Modifie un train avec ses informations dans la base de données")
+    @ApiResponse(responseCode = "201", description = "Train modifié avec succès")
+    @ApiResponse(responseCode = "400", description = "Requête invalide (erreur de validation)",
+                content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = com.setrag.stg_infotraffic_api.exception.ErrorResponse.class)))
     @PutMapping("/{id}")
     public ResponseEntity<TrainRouteDTO> updateTrainRoute(@PathVariable Long id, @RequestBody TrainRouteDTO routeDetailsDto) {
         TrainRouteDTO updatedRoute = trainRouteService.updateTrainRoute(id, routeDetailsDto);
         return ResponseEntity.ok(updatedRoute);
     }
 
+    @Operation(summary = "Supprime un train avec ses itinéraires",
+                description = "Supprime un train avec ses informations dans la base de données")
+    @ApiResponse(responseCode = "204", description = "Train supprimé avec succès")
+    @ApiResponse(responseCode = "400", description = "Requête invalide (erreur de validation)",
+                content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = com.setrag.stg_infotraffic_api.exception.ErrorResponse.class)))
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTrainRoute(@PathVariable Long id) {
         trainRouteService.deleteTrainRoute(id);
