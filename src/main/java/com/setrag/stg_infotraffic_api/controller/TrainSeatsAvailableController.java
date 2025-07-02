@@ -1,8 +1,9 @@
 package com.setrag.stg_infotraffic_api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.setrag.stg_infotraffic_api.dto.TrainSeatsAvailableDTO;
 import com.setrag.stg_infotraffic_api.service.TrainSeatsAvailableService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,9 +45,17 @@ public class TrainSeatsAvailableController {
                 content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = TrainSeatsAvailableDTO.class)))
     @GetMapping
-    public ResponseEntity<List<TrainSeatsAvailableDTO>> getAllTrainSeatsAvailable() {
-        List<TrainSeatsAvailableDTO> trains = trainSeatsAvailableService.getAllTrainSeatsAvailable();
-        return ResponseEntity.ok(trains); // Renvoie un 200 OK avec la liste des trains 
+    public ResponseEntity<Page<TrainSeatsAvailableDTO>> getTrainSeatsAvailable(
+        @Parameter(description = "Numéro de train à filtrer (recherche partielle insensible à la casse)")
+        @RequestParam(required = false) String trainNumber,
+        @Parameter(description = "Gare de départ à filtrer (recherche partielle insensible à la casse)")
+        @RequestParam(required = false) String departureStation,
+        @PageableDefault(page = 0, size = 10, sort = "id")
+        @Parameter(description = "Informations de pagination (page, size, sort). ?page=0&size=10&sort=trainNumber,asc")
+        Pageable pageable
+    ) {
+        Page<TrainSeatsAvailableDTO> trainsPage = trainSeatsAvailableService.getTrainSeatsAvailable(trainNumber, departureStation, pageable);
+        return ResponseEntity.ok(trainsPage);
     }
 
     @Operation(summary = "Récupérer un train par ID",

@@ -1,9 +1,8 @@
 package com.setrag.stg_infotraffic_api.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.setrag.stg_infotraffic_api.dto.TrainRouteDTO;
@@ -46,10 +45,18 @@ public class TrainRouteService {
         return route;
     }
 
-    public List<TrainRouteDTO> getAllTrainRoutes() {
-        return trainRouteRepository.findAll().stream()
-            .map(this::convertToDto)
-            .collect(Collectors.toList());
+    public Page<TrainRouteDTO> getTrainRoutes(String trainNumber, String station, Pageable pageable) {
+        Page<TrainRoute> routesPage;
+        if(trainNumber != null && !trainNumber.isEmpty() && station != null && !station.isEmpty()) {
+            routesPage = trainRouteRepository.findByTrainNumberContainingIgnoreCaseAndStationIgnoreCase(trainNumber, station, pageable);
+        } else if (trainNumber != null && !trainNumber.isEmpty()) {
+            routesPage = trainRouteRepository.findByTrainNumberContainingIgnoreCase(trainNumber, pageable);
+        } else if (station != null && !station.isEmpty()) {
+            routesPage = trainRouteRepository.findByStationContainingIgnoreCase(station, pageable);
+        } else {
+            routesPage = trainRouteRepository.findAll(pageable);
+        }
+        return routesPage.map(this::convertToDto);
     }
 
     public TrainRouteDTO getTrainRouteById(Long id) {

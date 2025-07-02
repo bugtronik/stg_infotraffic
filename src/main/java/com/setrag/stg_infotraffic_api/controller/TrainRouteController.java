@@ -1,8 +1,9 @@
 package com.setrag.stg_infotraffic_api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.setrag.stg_infotraffic_api.dto.TrainRouteDTO;
@@ -19,6 +21,7 @@ import com.setrag.stg_infotraffic_api.dto.TrainSeatsAvailableDTO;
 import com.setrag.stg_infotraffic_api.service.TrainRouteService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -41,9 +44,17 @@ public class TrainRouteController {
                 content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = TrainSeatsAvailableDTO.class)))
     @GetMapping
-    public ResponseEntity<List<TrainRouteDTO>> getAllTrainRoutes() {
-        List<TrainRouteDTO> routes = trainRouteService.getAllTrainRoutes();
-        return ResponseEntity.ok(routes);
+    public ResponseEntity<Page<TrainRouteDTO>> getTrainRoutes(
+        @Parameter(description = "Numéro de train à filtrer (recherche partielle insensible à la casse)")
+        @RequestParam(required = false) String trainNumber,
+        @Parameter(description = "Gare de départ à filtrer (recherche partielle insensible à la casse)")
+        @RequestParam(required = false) String station,
+        @PageableDefault(page = 0, size = 10, sort = "id")
+        @Parameter(description = "Informations de pagination (page, size, sort). ?page=0&size=10&sort=trainNumber,asc")
+        Pageable pageable
+    ) {
+        Page<TrainRouteDTO> routesPages = trainRouteService.getTrainRoutes(trainNumber, station, pageable);
+        return ResponseEntity.ok(routesPages);
     }
 
     @Operation(summary = "Récupérer un train par ID",

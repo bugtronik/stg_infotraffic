@@ -1,9 +1,8 @@
 package com.setrag.stg_infotraffic_api.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.setrag.stg_infotraffic_api.dto.TrainSeatsAvailableDTO;
@@ -49,14 +48,29 @@ public class TrainSeatsAvailableService {
         return train;
     }
 
+    // --- Opération de service mises à jour pour la pagination et le filtrage ---
     /**
-     * Récupère tous les trains avec sièges disponibles.
-     * @return une liste de tous les objets TrainSeatsAvailable.
+     * Récupère tous les trains avec sièges  disponibles avec pagination et filtres optionels
+     * @param trainNumber Filtre optionnel par numéro de train
+     * @param departureStation Filtre optionnel par gare de départ
+     * @param pageable informations de pagination (numéro de page, taille de page, tri)
+     * @return une Page de TrainSeatsAvailableDTO
      */
-    public List<TrainSeatsAvailableDTO> getAllTrainSeatsAvailable() {
-        return trainSeatsAvailableRepository.findAll().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    public Page<TrainSeatsAvailableDTO> getTrainSeatsAvailable(String trainNumber, String departureStation, Pageable pageable) {
+        Page<TrainSeatsAvailable> trainsPage;
+
+        if (trainNumber != null && !trainNumber.isEmpty() && departureStation != null && !departureStation.isEmpty()) {
+            trainsPage = trainSeatsAvailableRepository.findByTrainNumberContainingIgnoreCaseAndDepartureStationContainingIgnoreCase(
+                trainNumber, departureStation, pageable);
+        } else if (trainNumber != null && !trainNumber.isEmpty()) {
+            trainsPage = trainSeatsAvailableRepository.findByTrainNumberContainingIgnoreCase(trainNumber, pageable);
+        } else if (departureStation != null && !departureStation.isEmpty()) {
+            trainsPage = trainSeatsAvailableRepository.findByDepartureStationContainingIgnoreCase(departureStation, pageable);
+        } else {
+            trainsPage = trainSeatsAvailableRepository.findAll(pageable);
+        }
+
+        return trainsPage.map(this::convertToDto);
     }
 
     /**
