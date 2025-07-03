@@ -1,6 +1,5 @@
 package com.setrag.stg_infotraffic_api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,6 @@ public class TrainSeatsAvailableService {
     
     private final TrainSeatsAvailableRepository trainSeatsAvailableRepository;
 
-    @Autowired
     public TrainSeatsAvailableService(TrainSeatsAvailableRepository trainSeatsAvailableRepository) {
         this.trainSeatsAvailableRepository = trainSeatsAvailableRepository;
     }

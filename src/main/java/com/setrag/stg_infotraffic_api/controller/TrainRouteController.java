@@ -1,6 +1,5 @@
 package com.setrag.stg_infotraffic_api.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -33,7 +32,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class TrainRouteController {
     private final TrainRouteService trainRouteService;
 
-    @Autowired
     public TrainRouteController(TrainRouteService trainRouteService) {
         this.trainRouteService = trainRouteService;
     }

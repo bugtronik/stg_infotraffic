@@ -1,6 +1,5 @@
 package com.setrag.stg_infotraffic_api.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -34,7 +33,6 @@ public class TrainSeatsAvailableController {
     
     private final TrainSeatsAvailableService trainSeatsAvailableService;
 
-    @Autowired
     public TrainSeatsAvailableController(TrainSeatsAvailableService trainSeatsAvailableService) {
         this.trainSeatsAvailableService = trainSeatsAvailableService;
     }
