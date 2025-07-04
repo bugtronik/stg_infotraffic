@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +43,7 @@ public class TrainPlannedController {
                 content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = TrainSeatsAvailableDTO.class)))
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')") // Seuls les ADMINs et USERs peuvent lire
     public ResponseEntity<Page<TrainPlannedDTO>> getTrainsPlanned(
         @RequestParam(required = false) String trainNumber,
         @RequestParam(required = false) String classe,
@@ -58,6 +60,7 @@ public class TrainPlannedController {
                 content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = com.setrag.stg_infotraffic_api.exception.ErrorResponse.class)))
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')") // Seuls les ADMINs et USERs peuvent lire
     public ResponseEntity<TrainPlannedDTO> getTrainPlannedById(@PathVariable Long id) {
         TrainPlannedDTO train = trainPlannedService.getTrainPlannedById(id);
         return ResponseEntity.ok(train);
@@ -70,6 +73,7 @@ public class TrainPlannedController {
                 content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = com.setrag.stg_infotraffic_api.exception.ErrorResponse.class)))
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN')") // Seuls les ADMINs peuvent créer
     public ResponseEntity<TrainPlannedDTO> createTrainPlanned(@Valid @RequestBody TrainPlannedDTO trainDto) {
         TrainPlannedDTO createdTrain = trainPlannedService.createTrainPlanned(trainDto);
         return new ResponseEntity<>(createdTrain, HttpStatus.CREATED);
@@ -82,6 +86,7 @@ public class TrainPlannedController {
                 content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = com.setrag.stg_infotraffic_api.exception.ErrorResponse.class)))
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')") // Seuls les ADMINs peuvent mettre à jour
     public ResponseEntity<TrainPlannedDTO> updateTrainPlanned(@PathVariable Long id, @Valid @RequestBody TrainPlannedDTO trainDetailsDto) {
         TrainPlannedDTO updatedTrain = trainPlannedService.updateTrainPlanned(id, trainDetailsDto);
         return ResponseEntity.ok(updatedTrain);
@@ -94,6 +99,7 @@ public class TrainPlannedController {
                 content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = com.setrag.stg_infotraffic_api.exception.ErrorResponse.class)))
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN')") // Seuls les ADMINs peuvent supprimer
     public ResponseEntity<Void> deleteTrainPlanned(@PathVariable Long id) {
         trainPlannedService.deleteTrainPlanned(id);
         return ResponseEntity.noContent().build();
